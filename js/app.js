@@ -1,31 +1,18 @@
 
-let dataForTable = [
-  {id: 1, name: 'Максимальное зачение', value: 0},
-  {id: 2, name: 'Минимальное зачение', value: 0},
-  {id: 3, name: 'Сумма', value: 0},
-  {id: 4, name: 'Среднее значение', value: 0},
-]
-
-function getUserInput () {
-let inp = document.getElementById('userInputString').value.split(',').filter(el => el = +el).map(el => +el);
-return inp;
-}
+const getUserInput = () => document.getElementById('userInputString').value.split(',').filter(el => el = +el).map(el => +el);
 
 function getMathCalculation (arr) {
-  let max = Math.max.apply(null, arr) 
-  let min = Math.min.apply(null, arr) 
-  let total = arr.reduce((acc, el) => acc+el);
-  let avg = Math.round(total/arr.length);
-  console.log(arr);
-  console.log(max);
-  console.log(min);
-  console.log(total);
-  console.log(avg);
-}
-
-function submitUserInput () { 
-  getMathCalculation(getUserInput())
-  outputDataToTable()
+  const max = Math.max(...arr) 
+  const min = Math.min(...arr) 
+  const total = arr.reduce((acc, el) => acc + el);
+  const avg = Math.round(total/arr.length);
+  const data = [
+    {id: 1, name: 'Максимальное зачение', value: max},
+    {id: 2, name: 'Минимальное зачение', value: min},
+    {id: 3, name: 'Сумма', value: total},
+    {id: 4, name: 'Среднее значение', value: avg},
+  ]
+  return data;
 }
 
 function createHTMLNode (tag, attrs, content) {
@@ -35,30 +22,33 @@ function createHTMLNode (tag, attrs, content) {
   return el;
 }
 
-
-function outputDataToTable () {
-//thead tr th
-const columns = ['Номер', 'Параметр', 'Значение'];
+function outputDataToTable (dataForTable) {
+const columns = ['Номер', 'Параметр', 'Значение']; //thead tr th
 const outThead = createHTMLNode ('thead', [], null);
 const outTheadTr = createHTMLNode ('tr', [], null);
 columns.map(el => outTheadTr.appendChild(createHTMLNode ('th', [{name: 'scope', value: ['col']}], el)));
-outThead.appendChild(outTheadTr)
-//tbody tr td
-const outTbody = createHTMLNode ('tbody', [], null);
+outThead.appendChild(outTheadTr);
+const outTbody = createHTMLNode ('tbody', [], null); //tbody tr td
 dataForTable.map(el => {
   const outTbodyTr = createHTMLNode('tr',[],null);
   Object.keys(el).map(elName => outTbodyTr.appendChild(createHTMLNode('td', [], el[elName])))
   outTbody.appendChild(outTbodyTr);
 })
-// table
-const outTable = createHTMLNode ('table', [{name: 'class', value: ['table']}], null);
-outTable.appendChild(outThead)
-outTable.appendChild(outTbody)
+const outTable = createHTMLNode ('table', [{name: 'class', value: ['table']}, {name: 'id', value: ['output-table']}], null); // table
+outTable.appendChild(outThead);
+outTable.appendChild(outTbody);
+document.getElementById ('output-table') ? document.getElementById ('output-table').remove() : null;
+document.getElementById ('userInputString').value = "";
 document.getElementById('app').appendChild(outTable);
 }
 
+function submitUserInput () { 
+  let dataForTable = getMathCalculation(getUserInput())
+  outputDataToTable(dataForTable)
+}
 
-submit.onclick = submitUserInput
+submit.onclick = submitUserInput;
+
 
 
 
